@@ -1,4 +1,4 @@
-//an option can be thought of as a collection that is either full or empty
+////an option can be thought of as a collection that is either full or empty
 val maybeInt: Option[Int] = Some(10)
 val none = Option.empty
 
@@ -74,7 +74,7 @@ maybeString match {
 }
 
 maybeString.getOrElse(Some("bar"))
-noString.getOrElse(Some("bar"))
+noString.getOrElse("bar")
 
 //Constructing Options
 //think about why options are useful.
@@ -91,25 +91,21 @@ Some("a")
 
 //Nested options
 //a cat may have given birth
-case class Cat(name: String, firstKitten: Option[Cat])
-//a person may have a cat
-case class Person(firstCat: Option[Cat])
+case class Person(name: String, son: Option[Person])
 
-val dogLover = Person(Option.empty)
-//Tilly had a kitten called Fatty. Fatty had a kitten called Ginger.
-// Ginger is Tilly's granddaughter
-val catLoverWithThirdGenKittens = Person(Some(Cat("Stinks", Some(Cat("Fatty", Some(Cat("Ginger", Option.empty)))))))
-val catLoverWithNeuteredCat = Person(Some(Cat("Socks", Option.empty)))
+//Abraham begat Isaac; and Isaac begat Jacob
+//Jacob is Abraham's grandson
+val abraham = Person("Abraham", Some(Person("Isaac", Some(Person("Jacob", Option.empty)))))
 
-val granddaughter = catLoverWithThirdGenKittens.firstCat.flatMap(_.firstKitten.flatMap(_.firstKitten.map(_.name)))
+val grandson = abraham.son.flatMap(_.son).map(_.name)
+
 
 //remember for comprehensions evaluate a sequential program.
 // it's obvious here
 // (and also now that we know this is the same as granddaughter)
 // that this has to be done in sequence
-val granddaughterForComp = for {
-  stinks <- catLoverWithThirdGenKittens.firstCat
-  fatty <- stinks.firstKitten
-  ginger <- fatty.firstKitten
-} yield ginger.name
+val grandsonForComp = for {
+  isaac <- abraham.son
+  jacob <- isaac.son
+} yield jacob.name
 
